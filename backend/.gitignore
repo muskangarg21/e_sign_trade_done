@@ -1,0 +1,7 @@
+node_modules
+.env
+views
+docs
+signed_docs
+uploads
+might_help.txt
