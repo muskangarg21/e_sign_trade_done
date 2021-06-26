@@ -10,10 +10,13 @@ class About extends Component {
     this.sigPad.clear()
   }
   trim = () => {
+    var url_string = (window.location.href);
+    var url = new URL(url_string);
+    var signer_id = url.searchParams.get('id');
     this.setState({trimmedDataURL: this.sigPad.getTrimmedCanvas()
       .toDataURL('image/png')})
       call('POST', 'signimage',{'imagebase64':this.sigPad.getTrimmedCanvas()
-     .toDataURL('image/png')}).then((result) => {
+     .toDataURL('image/png'),'signer_id':signer_id}).then((result) => {
        console.log('post request result:', result);
      }).catch(err => {
        console.log("conn:", err)

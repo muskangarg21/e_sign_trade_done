@@ -10,7 +10,8 @@ const FilePreview = ({fileData}) => {
     const [showLoader, setshowLoader] = useState(false);
     const [docDetailsDB, setdocDetailsDB] = useState({});
     const [signData, setsignData]=useState({});
-    const [signId, setsignId]= useState([]);
+    //const [signId, setsignId]= useState(0);
+   
     //const [flag, setflag] = useState(false);
 
     useEffect(() => {
@@ -19,12 +20,44 @@ const FilePreview = ({fileData}) => {
         var url_string = (window.location.href);
         var url = new URL(url_string);
         var signer_id = url.searchParams.get('id');
-        setsignId(signer_id);
+        //setsignId(signer_id);
+        //console.log("signid",signId);
         //setflag(true);
         var type = url.searchParams.get('type');
         
         console.log(signer_id + ' ', type);
         
+
+        call('POST', 'signid',{"id":signer_id}).then((result1) => {
+          console.log("userId Result-->", result1)
+          setsignData(result1)
+          // call('POST', 'userdocdetails/1621', { 'tbldocid': 1621 }).then((result) => {
+          //     console.log("getdocId Result-->", result)
+          setdocDetailsDB(result1)
+          console.log("docdetails",docDetailsDB);
+  
+          call('POST', 'signfilehash', { 'fileHash': 'ba48df56abf360af7098d085058079ed' }).then((result2) => {
+          console.log("getDoc fileResult-->", result2)               
+          if (result2) {
+              console.log(result2);
+              setfileResult(result2)
+              setshowLoader(false);
+              console.log("FILEREUS",fileResult.filebase64);   
+          }
+          }).catch(err => {
+          setshowLoader(false)
+          console.log("previewFile error:->", err)
+          toastDisplay(err, "error");
+          })
+  
+          // }).catch(err => {
+          //     console.log("getdocdetails error:->", err)
+          //     toastDisplay(err, "error");
+          // })
+      }).catch(err => {
+          console.log("getdocdetails error:->", err)
+          toastDisplay(err, "error");
+      })
         
         } catch (error) {
         
@@ -39,10 +72,10 @@ const FilePreview = ({fileData}) => {
       }
 
     function viewTheFile(result) {
+        console.log("filename",docDetailsDB.file_Name)
         let mime = docDetailsDB.file_name.split(".").pop()
-        console.log("DOCDETAILSS");
-        console.log(docDetailsDB.file_name);
-        console.log("minmepjf");
+        console.log("jkadbd",mime);        
+        console.log(docDetailsDB.file_name);        
         let sourceType = getSourceType(mime)
         return (
           <div>
@@ -60,42 +93,13 @@ const FilePreview = ({fileData}) => {
 
 
     //if(flag)      {
-    call('POST', 'signid',{"id":signId}).then((result1) => {
-        console.log("userId Result-->", result1)
-        setsignData(result1)
-        // call('POST', 'userdocdetails/1621', { 'tbldocid': 1621 }).then((result) => {
-        //     console.log("getdocId Result-->", result)
-        //     setdocDetailsDB(result)
-
-        call('POST', 'signfilehash', { 'fileHash': 'ba48df56abf360af7098d085058079ed' }).then((result2) => {
-        console.log("getDoc fileResult-->", result2)
-        console.log("FILEREUS",fileResult.filebase64);        
-        if (result2) {
-            console.log(result2);
-            setfileResult(result2)
-            setshowLoader(false);
-        }
-        }).catch(err => {
-        setshowLoader(false)
-        console.log("previewFile error:->", err)
-        toastDisplay(err, "error");
-        })
-
-        // }).catch(err => {
-        //     console.log("getdocdetails error:->", err)
-        //     toastDisplay(err, "error");
-        // })
-    }).catch(err => {
-        console.log("getdocdetails error:->", err)
-        toastDisplay(err, "error");
-    })
+    
     //setflag(false);
 //}
-    console.log("gkjhhfh",fileResult.filebase64);
+   // console.log("gkjhhfh",fileResult.filebase64);
     return (
         <div>
-            <div >  
-                {console.log("fieffnsd",fileResult.filebase64)}             
+            <div>                          
                 {fileResult.filebase64 && viewTheFile(fileResult)}
             </div>
             <About/>
