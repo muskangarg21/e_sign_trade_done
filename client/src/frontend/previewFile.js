@@ -39,9 +39,10 @@ const FilePreview = ({fileData, showPreviewModal, setshowPreviewModal, viewTrail
 
     if (docID) {
 
-      call('POST', 'userdocdetails/1621', { 'tbldocid': 1621 }).then((result) => {
+      call('POST', 'userdocdetails/1615', { 'tbldocid': 1615 }).then((result) => {
         console.log("getdocdetails Result-->", result)
         setdocDetailsDB(result)
+        console.log("filehash",docDetailsDB.file_hash);
 
         call('POST', 'userdochash', { 'fileHash': 'ba48df56abf360af7098d085058079ed' }).then((result2) => {
           console.log("getDoc fileResult-->", result2)
@@ -219,7 +220,8 @@ const FilePreview = ({fileData, showPreviewModal, setshowPreviewModal, viewTrail
       position: "",
       usertype: "",
       ratio: "",
-      tblDocId: 1621,
+      tblDocId: 1615,
+      fileHash: docDetailsDB.file_hash,
 
       errors: {
         email: null,

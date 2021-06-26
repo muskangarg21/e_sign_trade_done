@@ -33,7 +33,7 @@ function insertAddSign(signData){
       userSignData.push(Object.values(signData[i]));
     }
     pool.getConnection((err,connection)=>{   
-      var sqlQuery = 'INSERT INTO tbl_add_sign_details (email,Pagenum,position,usertype,ratio,tblDocId) VALUES ?';
+      var sqlQuery = 'INSERT INTO tbl_signdetails (email,Pagenum,position,usertype,ratio,tblDocId,file_hash) VALUES ?';
       connection.query(sqlQuery,[userSignData],(err,rows)=>{
         if(err)console.log(err);
         else{
@@ -65,12 +65,24 @@ function sendEmailToUser(signData){
   //const insertId ='5';
   for(let i=0;i<signData.length;i++)
   {
+    let type;
+    //.log(signData[i].usertype);
+    if(signData[i].usertype==='seller'){
+      console.log("yebbkd");
+      type=4;
+    }
+    else if(signData[i].usertype==='buyer'){
+      type=3;
+      console.log("jkdsb k");
+    }
+    var html =`<p>Hey user, you have been added for Invoice Discounting Finance. For reviewing it <a href="${baseUrl}financerequest?id=${encodeURIComponent(signData[i].id)}&type=${encodeURIComponent(type)}">Click Here</a></p>`;
+    console.log(html);
     var mailOptions = {
       from: 'harshalb1101@gmail.com',
       to: signData[i].email,
       subject: 'Invite Link',
       text: 'Helloo',
-      html: `<p>Hey user, you have been added for Invoice Discounting Finance. For reviewing it <a href="${baseUrl}financerequest?id=${encodeURIComponent(signData[i].id)}&type=${encodeURIComponent(3)}">Click Here</a></p>`
+      html: html
     // attachments: [
     //     {filename:'Week3_L16.pdf',path:'./Week3_L16.pdf'}
     // ]

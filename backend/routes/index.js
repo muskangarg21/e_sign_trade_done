@@ -20,7 +20,7 @@ router.get('/alldocs',icontrollers.getAllDocs);
 
 router.post('/signimage',econtrollers.hello);
 
-router.post('/signposition',econtrollers.signPos);
+//router.post('/signposition',econtrollers.signPos);
 
 
 router.post('/addsign/:filehash',scontrollers.sendMail)

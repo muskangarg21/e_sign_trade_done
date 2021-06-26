@@ -12,7 +12,7 @@ exports.sendDocDetails = (req,res)=>{
         console.log(ido)
         pool.getConnection((err,connection)=>{
             
-            var sqlQuery = "SELECT* FROM tbl_document_details WHERE tbl_document_details.id =(SELECT tblDocId FROM tbl_add_sign_details WHERE tbl_add_sign_details.id=" +mysql.escape(id) +")";
+            var sqlQuery = "SELECT* FROM tbl_document_details WHERE tbl_document_details.id =(SELECT tblDocId FROM tbl_signdetails WHERE tbl_signdetails.id=" +mysql.escape(id) +")";
             connection.query(sqlQuery,(err,rows)=>{
             if(err)console.log(err);
             else{
@@ -35,21 +35,32 @@ exports.sendDocDetails = (req,res)=>{
 
 exports.sendFileHash = async(req,res)=>{
   try {
-    const fileHash = 'ba48df56abf360af7098d085058079ed';
-    let docObj = await getDocFunc(fileHash);
-    console.log("Successfully done");
-    //console.log(docObj);
-    res.send({
-        success: true,
-        message: docObj
+    pool.getConnection((err,connection)=>{
+      const id =1615;
+      var sqlQuery = "SELECT* FROM `tbl_document_details` WHERE id =" +mysql.escape(id);
+      connection.query(sqlQuery,async(err,rows)=>{
+        if(err)console.log(err);
+        else{
+          console.log(rows[0]);
+          const fileHash = rows[0].file_hash;
+          let docObj = await getDocFunc(fileHash);
+          console.log("Successfully done");
+      //console.log(docObj);
+          res.send({
+            success: true,
+            message: docObj
+          });
+        }
+      })
     });
-} catch (error) {
-    console.log(error)
-    res.send({
-        success: false,
-        message: 'Cannot get file!'
-    })
-}
+      
+  } catch (error) {
+      console.log(error)
+      res.send({
+          success: false,
+          message: 'Cannot get file!'
+      })
+  }
 }
 
 let getDocFunc = async function(fileHash){
@@ -59,7 +70,7 @@ let getDocFunc = async function(fileHash){
       if (!fileHash) {
         throw ('Invalid Request! Required params not found.')
       }else {        
-        let docPath = `./docs/${fileHash}`;        
+        let docPath = `./docs/${fileHash}.pdf`;        
         var filebase64 = base64_encode(docPath);
         console.log("Filebase64");
         resolve({

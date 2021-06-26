@@ -16,15 +16,15 @@ class About extends Component {
     this.setState({trimmedDataURL: this.sigPad.getTrimmedCanvas()
       .toDataURL('image/png')})
       call('POST', 'signimage',{'imagebase64':this.sigPad.getTrimmedCanvas()
-     .toDataURL('image/png'),'signer_id':signer_id}).then((result) => {
+     .toDataURL('image/png'),'fileHash': 'ba48df56abf360af7098d085058079ed','signer_id':signer_id}).then((result) => {
        console.log('post request result:', result);
      }).catch(err => {
        console.log("conn:", err)
      })
-     call('POST', 'addsign/522',).then((result) => {      
-     }).catch(err => {
-       console.log("conn:", err)
-     })
+    //  call('POST', 'addsign/522',).then((result) => {      
+    //  }).catch(err => {
+    //    console.log("conn:", err)
+    //  })
   }
   render () {
   let {trimmedDataURL} = this.state

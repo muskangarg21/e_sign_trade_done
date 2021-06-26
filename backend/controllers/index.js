@@ -122,14 +122,25 @@ exports.getDocRoute = async (req, res) => {
   //console.log("am i reachable")
   
   try {
-      const fileHash = 'ba48df56abf360af7098d085058079ed';
-      let docObj = await getDocFunc(fileHash);
-      console.log("Successfully done");
+    pool.getConnection((err,connection)=>{
+      const id =1615;
+      var sqlQuery = "SELECT* FROM `tbl_document_details` WHERE id =" +mysql.escape(id);
+      connection.query(sqlQuery,async(err,rows)=>{
+        if(err)console.log(err);
+        else{
+          console.log(rows[0]);
+          const fileHash = rows[0].file_hash;
+          let docObj = await getDocFunc(fileHash);
+          console.log("Successfully done");
       //console.log(docObj);
-      res.send({
-          success: true,
-          message: docObj
-      });
+          res.send({
+            success: true,
+            message: docObj
+          });
+        }
+      })
+    });
+      
   } catch (error) {
       console.log(error)
       res.send({
@@ -144,10 +155,11 @@ let getDocFunc = async function(fileHash){
   return new Promise((resolve,reject)=>{
     try{
      // console.log(fileHash);
+     
       if (!fileHash) {
         throw ('Invalid Request! Required params not found.')
       }else {        
-        let docPath = `./docs/${fileHash}`;        
+        let docPath = `./docs/${fileHash}.pdf`;        
         var filebase64 = base64_encode(docPath);
         resolve({
             "filebase64": filebase64,
@@ -201,11 +213,13 @@ exports.getDocDetails =(req,res)=>{
   
   try{
     const id = req.params.id;
+    console.log(id);
     pool.getConnection((err,connection)=>{
-      var sqlQuery = "SELECT* FROM tbl_document_details WHERE id =" +mysql.escape(id);
+      var sqlQuery = "SELECT* FROM `tbl_document_details` WHERE id =" +mysql.escape(id);
       connection.query(sqlQuery,(err,rows)=>{
         if(err)console.log(err);
         else{
+          console.log(rows[0]);
           res.json({
             success: true,
             message: rows[0]
